@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+#root {
+  min-height: 100vh;
+}
