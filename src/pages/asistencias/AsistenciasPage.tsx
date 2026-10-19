@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Chip, Input, Spinner } from "@heroui/react";
 import { Controller } from "react-hook-form";
 import StarRating from "@/components/StarRating";
+import { etiquetaTurno } from "@/utils/turno";
 import { useAsistencias } from "./hooks/useAsistencias";
 
 const GENEROS = [
@@ -72,7 +73,7 @@ export default function AsistenciasPage() {
               <Chip color="accent" variant="soft">
                 Jornada {resultado.clave}
               </Chip>
-              <Chip variant="soft">{resultado.turno}</Chip>
+              <Chip variant="soft">{etiquetaTurno(resultado.turno)}</Chip>
             </div>
 
             <dl className="mt-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
@@ -94,7 +95,9 @@ export default function AsistenciasPage() {
               </div>
               <div>
                 <dt className="text-slate-500">Turno</dt>
-                <dd className="font-medium">{resultado.turno}</dd>
+                <dd className="font-medium">
+                  {etiquetaTurno(resultado.turno)}
+                </dd>
               </div>
             </dl>
 
@@ -124,7 +127,8 @@ export default function AsistenciasPage() {
         </p>
         {jornadaActual && (
           <Chip className="mt-3" color="accent" variant="soft">
-            Jornada vigente: {jornadaActual.clave} · {jornadaActual.turno}
+            Jornada vigente: {jornadaActual.clave} ·{" "}
+            {etiquetaTurno(jornadaActual.turno)}
           </Chip>
         )}
       </div>

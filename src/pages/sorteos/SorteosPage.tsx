@@ -4,10 +4,8 @@ import { useSorteos } from "./hooks/useSorteos";
 import SorteoOverlay from "./components/SorteoOverlay";
 import DetalleGanador from "./components/DetalleGanador";
 import Confetti from "@/components/Confetti";
-import type { ParticipanteRes, Turno } from "@/types";
-
-const etiquetaTurno = (turno: Turno) =>
-  turno === "MANANA" ? "Mañana" : "Tarde";
+import { etiquetaTurno } from "@/utils/turno";
+import type { ParticipanteRes } from "@/types";
 
 const inputClasses =
   "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20";

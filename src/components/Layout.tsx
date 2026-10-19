@@ -64,10 +64,10 @@ export default function Layout() {
               <Button
                 size="md"
                 variant="tertiary"
-                className="!text-white hover:!bg-white/10"
+                className="!text-accent hover:!bg-white/10"
                 onPress={() => navigate("/login")}
               >
-                Ingresar
+                Administrador
               </Button>
             )}
           </div>

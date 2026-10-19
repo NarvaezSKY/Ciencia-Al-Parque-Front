@@ -7,10 +7,7 @@ import { useDashboard } from "./hooks/useDashboard";
 import WinnerCelebration from "./components/WinnerCelebration";
 import { useEstadisticasStore } from "@/store/estadisticas.store";
 import type { ISorteoResultado } from "@/core/sorteos/domain/realizar";
-import type { Turno } from "@/types";
-
-const etiquetaTurno = (turno: Turno) =>
-  turno === "MANANA" ? "Mañana" : "Tarde";
+import { etiquetaTurno } from "@/utils/turno";
 
 function useReloj() {
   const [ahora, setAhora] = useState(() => new Date());
