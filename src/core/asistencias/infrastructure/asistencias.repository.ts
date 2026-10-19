@@ -18,11 +18,10 @@ export const asistenciasRepository: IAsistenciasRepository = {
 
   async registrar(data: IRegistrarReq): Promise<IRegistrarRes> {
     try {
-      const response = await axiosInstance.post<IRegistrarRes>(
-        "/asistencias",
-        data
-      );
-      return response.data;
+      const response = await axiosInstance.post<
+        IRegistrarRes & { asistencia?: IRegistrarRes }
+      >("/asistencias", data);
+      return response.data.asistencia ?? response.data;
     } catch (error) {
       throw error;
     }

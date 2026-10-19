@@ -11,10 +11,13 @@ export interface IEstadisticasSnapshot {
   };
   porJornada: { clave: string; total: number }[];
   porDia: { fecha: string; total: number }[];
+  porLugar: { lugar: string; total: number }[];
   asistentesUnicos: number;
   totalAsistencias: number;
   nuevos: number;
   recurrentes: number;
+  calificacionPromedio: number;
+  calificacionVotos: number;
   ultimaHora: { hora: string; total: number }[];
   actualizadoEn: string;
 }

@@ -1,13 +1,15 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "@heroui/react";
 import { toast } from "sonner";
+import logo from "@/assets/Ciencia_al_Parque_blanco_transparente.png";
+import footerBanner from "@/assets/footerbanner.jpeg";
 import { useAuthStore } from "@/store/auth.store";
 
 const linkClasses = ({ isActive }: { isActive: boolean }) =>
-  `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+  `px-4 py-2.5 rounded-lg text-base font-medium transition-colors ${
     isActive
-      ? "bg-white text-indigo-700 shadow-sm"
-      : "text-indigo-100 hover:bg-white/10"
+      ? "bg-white text-brand shadow-sm"
+      : "text-brand-200 hover:bg-white/10"
   }`;
 
 export default function Layout() {
@@ -22,9 +24,15 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-indigo-700 text-white">
-        <nav className="mx-auto max-w-6xl px-4 py-3 flex flex-wrap items-center gap-2">
-          <span className="font-bold text-lg mr-4">Ciencia al Parque</span>
+      <header className="bg-brand text-white shadow-lg shadow-brand/20">
+        <nav className="mx-auto max-w-7xl px-4 py-5 flex flex-wrap items-center gap-3">
+          <NavLink to="/" className="mr-4 flex items-center" aria-label="Inicio">
+            <img
+              src={logo}
+              alt="Ciencia al Parque"
+              className="h-16 w-auto drop-shadow-sm sm:h-20"
+            />
+          </NavLink>
           <NavLink to="/" className={linkClasses} end>
             Inicio
           </NavLink>
@@ -40,12 +48,13 @@ export default function Layout() {
           <div className="ml-auto flex items-center gap-3">
             {user ? (
               <>
-                <span className="hidden sm:inline text-sm text-indigo-100">
+                <span className="hidden sm:inline text-base text-brand-200">
                   {user.email}
                 </span>
                 <Button
-                  size="sm"
+                  size="md"
                   variant="tertiary"
+                  className="!bg-red-500/80 !text-white hover:!bg-red-500"
                   onPress={() => void onLogout()}
                 >
                   Cerrar sesión
@@ -53,8 +62,9 @@ export default function Layout() {
               </>
             ) : (
               <Button
-                size="sm"
+                size="md"
                 variant="tertiary"
+                className="!text-white hover:!bg-white/10"
                 onPress={() => navigate("/login")}
               >
                 Ingresar
@@ -64,13 +74,19 @@ export default function Layout() {
         </nav>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-8">
-        <Outlet />
+      <main className="flex-1 w-full px-4 py-8">
+        <div className="mx-auto w-full max-w-7xl rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+          <Outlet />
+        </div>
       </main>
 
-      <footer className="border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        Ciencia al Parque · Registro de asistencias, sorteos y estadísticas en
-        tiempo real
+      <footer className="bg-white">
+        <hr className="border-slate-200" />
+        <img
+          src={footerBanner}
+          alt="Ciencia al Parque · Registro de asistencias, sorteos y estadísticas en tiempo real"
+          className="mx-auto block w-auto max-h-40 max-w-full object-contain px-4 py-4"
+        />
       </footer>
     </div>
   );

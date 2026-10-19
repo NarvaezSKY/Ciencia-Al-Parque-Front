@@ -12,6 +12,11 @@ const MENSAJES_SORTEO: Record<string, string> = {
   SORTEO_CONFLICTO: "No se pudo completar el sorteo, intenta nuevamente"
 };
 
+const esperar = (ms: number) =>
+  new Promise((resolve) => window.setTimeout(resolve, ms));
+
+const DURACION_SORTEO_MS = 3200;
+
 export const useSorteos = () => {
   const { jornadas, historial, isLoading, realizando, cargarDatos, realizar } =
     useSorteosStore();
@@ -19,6 +24,7 @@ export const useSorteos = () => {
   const [seleccion, setSeleccion] = useState<string[]>([]);
   const [premio, setPremio] = useState("");
   const [resultado, setResultado] = useState<ISorteoResultado | null>(null);
+  const [sorteando, setSorteando] = useState(false);
 
   useEffect(() => {
     cargarDatos().catch(() => undefined);
@@ -46,11 +52,16 @@ export const useSorteos = () => {
       return;
     }
 
+    setResultado(null);
+    setSorteando(true);
     try {
-      const res = await realizar({
-        jornadaIds: seleccion,
-        premio: premio.trim()
-      });
+      const [res] = await Promise.all([
+        realizar({
+          jornadaIds: seleccion,
+          premio: premio.trim()
+        }),
+        esperar(DURACION_SORTEO_MS)
+      ]);
       setResultado(res);
       toast.success(
         `Sorteo #${res.numeroSorteo} realizado: ganó ${
@@ -66,6 +77,8 @@ export const useSorteos = () => {
         body?.message ??
         "No se pudo realizar el sorteo";
       toast.error(mensaje);
+    } finally {
+      setSorteando(false);
     }
   };
 
@@ -74,6 +87,7 @@ export const useSorteos = () => {
     historial,
     isLoading,
     realizando,
+    sorteando,
     seleccion,
     setSeleccion,
     premio,

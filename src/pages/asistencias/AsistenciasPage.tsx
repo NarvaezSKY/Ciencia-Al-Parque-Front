@@ -1,4 +1,6 @@
 import { Alert, Button, Card, Chip, Input, Spinner } from "@heroui/react";
+import { Controller } from "react-hook-form";
+import StarRating from "@/components/StarRating";
 import { useAsistencias } from "./hooks/useAsistencias";
 
 const GENEROS = [
@@ -20,7 +22,7 @@ const PROCEDENCIAS = [
 const LUGARES = ["Timbío", "Santander de Quilichao", "Popayán"];
 
 const inputClasses =
-  "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500";
+  "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20";
 
 const selectClasses = `${inputClasses} appearance-none`;
 
@@ -48,6 +50,7 @@ export default function AsistenciasPage() {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors }
   } = form;
 
@@ -56,7 +59,7 @@ export default function AsistenciasPage() {
   if (resultado) {
     return (
       <div className="mx-auto max-w-2xl">
-        <Card className="border border-emerald-200">
+        <Card className="border border-accent/40">
           <Card.Header className="p-6 pb-0">
             <Card.Title>Asistencia registrada</Card.Title>
             <Card.Description>{resultado.mensaje}</Card.Description>
@@ -393,24 +396,27 @@ export default function AsistenciasPage() {
               </div>
 
               <div>
-                <label htmlFor="calificacion" className={labelClasses}>
-                  Calificación del evento
-                </label>
-                <select
-                  id="calificacion"
-                  className={selectClasses}
-                  {...register("calificacion", {
-                    required: "Selecciona una calificación",
-                    valueAsNumber: true
-                  })}
-                >
-                  <option value="">Selecciona...</option>
-                  {[1, 2, 3, 4, 5].map((valor) => (
-                    <option key={valor} value={valor}>
-                      {valor} {valor === 1 ? "estrella" : "estrellas"}
-                    </option>
-                  ))}
-                </select>
+                <span className={labelClasses}>Calificación del evento</span>
+                <Controller
+                  control={control}
+                  name="calificacion"
+                  rules={{
+                    validate: (value) =>
+                      (Number.isFinite(value) && value >= 1 && value <= 5) ||
+                      "Selecciona una calificación"
+                  }}
+                  render={({ field }) => (
+                    <div className="mt-1">
+                      <StarRating
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        etiqueta="Calificación del evento"
+                        tamano="h-9 w-9"
+                      />
+                    </div>
+                  )}
+                />
                 {errors.calificacion && (
                   <p className={errorClasses}>
                     {errors.calificacion.message}
@@ -436,7 +442,7 @@ export default function AsistenciasPage() {
                 <label className="flex items-start gap-2 text-sm text-slate-700">
                   <input
                     type="checkbox"
-                    className="mt-1 h-4 w-4 accent-indigo-600"
+                    className="mt-1 h-4 w-4 accent-brand"
                     {...register("aceptaTratamientoDatos", {
                       validate: (value) =>
                         value === true ||
