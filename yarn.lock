@@ -985,6 +985,11 @@ clsx@^2.0.0:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
+colombia-territorial@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/colombia-territorial/-/colombia-territorial-1.1.0.tgz#37877849b24d4245ab5f5e3a9b606330c36a0b46"
+  integrity sha512-qktmOik1vieAqfJmBLdVBmUnY3roPsnuo93SmA4Z2y9AinJ6mWFb43NcspisSLB7s4IaKIPrWooW45Kl0/82cA==
+
 combined-stream@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.8.tgz#c3d45a8b34fd730631a110a8a2520682b31d5a7f"

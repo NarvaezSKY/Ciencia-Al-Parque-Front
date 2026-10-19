@@ -1,5 +1,6 @@
 import { Alert, Button, Card, Chip, Input, Spinner } from "@heroui/react";
 import { Controller } from "react-hook-form";
+import MunicipioSelect, { OPCION_OTRO } from "@/components/MunicipioSelect";
 import StarRating from "@/components/StarRating";
 import { etiquetaTurno } from "@/utils/turno";
 import { useAsistencias } from "./hooks/useAsistencias";
@@ -13,7 +14,8 @@ const GENEROS = [
 ];
 
 const PROCEDENCIAS = [
-  "Institución",
+  "Institución / Gobierno",
+  "SENA",
   "Colegio",
   "Universidad",
   "Ciudadano",
@@ -52,10 +54,12 @@ export default function AsistenciasPage() {
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors }
   } = form;
 
   const procedenciaTipo = watch("procedenciaTipo");
+  const municipioSeleccion = watch("municipioSeleccion");
 
   if (resultado) {
     return (
@@ -366,6 +370,66 @@ export default function AsistenciasPage() {
                     <p className={errorClasses}>
                       {errors.procedenciaDetalle.message}
                     </p>
+                  )}
+                </div>
+              )}
+
+              <div className="sm:col-span-2">
+                <label htmlFor="municipioSeleccion" className={labelClasses}>
+                  Municipio de procedencia
+                </label>
+                <Controller
+                  control={control}
+                  name="municipioSeleccion"
+                  rules={{ required: "Selecciona tu municipio de procedencia" }}
+                  render={({ field }) => (
+                    <MunicipioSelect
+                      id="municipioSeleccion"
+                      value={field.value}
+                      className={inputClasses}
+                      onSelect={(opcion) => {
+                        field.onChange(opcion);
+                        setValue(
+                          "municipio",
+                          opcion === OPCION_OTRO ? "" : opcion,
+                          { shouldValidate: true, shouldTouch: true }
+                        );
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
+                {errors.municipioSeleccion && (
+                  <p className={errorClasses}>
+                    {errors.municipioSeleccion.message}
+                  </p>
+                )}
+              </div>
+
+              {municipioSeleccion === OPCION_OTRO && (
+                <div className="sm:col-span-2">
+                  <label htmlFor="municipio" className={labelClasses}>
+                    Especifica el municipio
+                  </label>
+                  <Input
+                    id="municipio"
+                    fullWidth
+                    placeholder="Escribe el nombre del municipio"
+                    className={inputClasses}
+                    {...register("municipio", {
+                      required: "Especifica el municipio",
+                      minLength: {
+                        value: 2,
+                        message: "Mínimo 2 caracteres"
+                      },
+                      maxLength: {
+                        value: 100,
+                        message: "Máximo 100 caracteres"
+                      }
+                    })}
+                  />
+                  {errors.municipio && (
+                    <p className={errorClasses}>{errors.municipio.message}</p>
                   )}
                 </div>
               )}

@@ -97,6 +97,10 @@ export default function DetalleGanador({
           <Campo etiqueta="Edad" valor={datos.edad} />
           <Campo etiqueta="Género" valor={datos.genero} />
           <Campo etiqueta="Procedencia" valor={datos.procedenciaTipo} />
+          <Campo
+            etiqueta="Municipio de procedencia"
+            valor={datos.municipio}
+          />
           <Campo etiqueta="Lugar del evento" valor={datos.lugarEvento} />
         </div>
       </div>

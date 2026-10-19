@@ -16,6 +16,7 @@
     "@react-aria/ssr": "^3.10.1",
     "@react-aria/utils": "^3.34.1",
     "axios": "^1.7.9",
+    "colombia-territorial": "^1.1.0",
     "leaflet": "^1.9.4",
     "react": "^19.1.0",
     "react-aria": "^3.52.1",

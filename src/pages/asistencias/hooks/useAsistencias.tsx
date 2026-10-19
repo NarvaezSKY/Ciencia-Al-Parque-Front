@@ -12,6 +12,8 @@ export interface RegistrarForm {
   telefono: string;
   procedenciaTipo: string;
   procedenciaDetalle: string;
+  municipioSeleccion: string;
+  municipio: string;
   lugarEvento: string;
   calificacion: number;
   destacado: string;
@@ -25,6 +27,8 @@ const DEFAULT_VALUES: RegistrarForm = {
   telefono: "",
   procedenciaTipo: "",
   procedenciaDetalle: "",
+  municipioSeleccion: "",
+  municipio: "",
   lugarEvento: "",
   calificacion: NaN,
   destacado: "",
@@ -89,9 +93,10 @@ export const useAsistencias = () => {
   const onRegistrarCompleto = async (data: RegistrarForm) => {
     if (!documentoVerificado) return;
 
-    const detalle = data.procedenciaDetalle?.trim();
+    const { municipioSeleccion: _municipioSeleccion, ...campos } = data;
+    const detalle = campos.procedenciaDetalle?.trim();
     const payload: IRegistrarReq = {
-      ...data,
+      ...campos,
       documento: documentoVerificado
     };
     if (!detalle) {

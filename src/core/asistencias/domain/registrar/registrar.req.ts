@@ -6,6 +6,7 @@ export interface IRegistrarReq {
   telefono?: string;
   procedenciaTipo?: string;
   procedenciaDetalle?: string;
+  municipio?: string;
   lugarEvento?: string;
   calificacion?: number;
   destacado?: string;

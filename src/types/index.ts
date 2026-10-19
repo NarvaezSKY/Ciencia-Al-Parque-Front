@@ -16,6 +16,7 @@ export interface ParticipanteRes {
   genero: string;
   telefono: string;
   procedenciaTipo: string;
+  municipio: string;
   lugarEvento: string;
   calificacion: number;
   destacado: string;
