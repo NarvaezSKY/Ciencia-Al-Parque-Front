@@ -33,9 +33,11 @@ export default function Layout() {
               className="h-16 w-auto drop-shadow-sm sm:h-20"
             />
           </NavLink>
-          <NavLink to="/" className={linkClasses} end>
-            Inicio
-          </NavLink>
+          {user && (
+            <NavLink to="/" className={linkClasses} end>
+              Inicio
+            </NavLink>
+          )}
           <NavLink to="/asistencias" className={linkClasses}>
             Asistencias
           </NavLink>

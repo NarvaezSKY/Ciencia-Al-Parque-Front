@@ -18,7 +18,7 @@ export default function App() {
             <Route path="/sorteos" element={<SorteosPage />} />
           </Route>
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/asistencias" replace />} />
       </Route>
     </Routes>
   );

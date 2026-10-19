@@ -11,7 +11,7 @@ export default function ProtectedRoute({ role }: Props) {
   const user = useAuthStore((state) => state.user);
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/asistencias" replace />;
   }
 
   if (role && user?.rol !== role) {
