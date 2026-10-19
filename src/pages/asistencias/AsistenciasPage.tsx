@@ -319,13 +319,13 @@ export default function AsistenciasPage() {
 
               <div>
                 <label htmlFor="procedenciaTipo" className={labelClasses}>
-                  Procedencia
+                  Forma de participación
                 </label>
                 <select
                   id="procedenciaTipo"
                   className={selectClasses}
                   {...register("procedenciaTipo", {
-                    required: "Selecciona la procedencia"
+                    required: "Selecciona la forma de participación"
                   })}
                 >
                   <option value="">Selecciona...</option>
@@ -342,49 +342,43 @@ export default function AsistenciasPage() {
                 )}
               </div>
 
-              <div>
-                <label htmlFor="procedenciaDetalle" className={labelClasses}>
-                  Detalle de procedencia
-                </label>
-                <Input
-                  id="procedenciaDetalle"
-                  fullWidth
-                  placeholder={
-                    procedenciaTipo === "Otro"
-                      ? "Especifica tu procedencia"
-                      : "Opcional"
-                  }
-                  className={inputClasses}
-                  {...register("procedenciaDetalle", {
-                    validate: (value) => {
-                      if (procedenciaTipo !== "Otro") return true;
-                      return (
+              {procedenciaTipo === "Otro" && (
+                <div>
+                  <label htmlFor="procedenciaDetalle" className={labelClasses}>
+                    Detalle forma de participación
+                  </label>
+                  <Input
+                    id="procedenciaDetalle"
+                    fullWidth
+                    placeholder="Especifica tu forma de participación"
+                    className={inputClasses}
+                    {...register("procedenciaDetalle", {
+                      validate: (value) =>
                         Boolean(value && value.trim().length > 0) ||
-                        "Especifica tu procedencia"
-                      );
-                    },
-                    minLength: {
-                      value: 3,
-                      message: "Mínimo 3 caracteres"
-                    }
-                  })}
-                />
-                {errors.procedenciaDetalle && (
-                  <p className={errorClasses}>
-                    {errors.procedenciaDetalle.message}
-                  </p>
-                )}
-              </div>
+                        "Especifica tu forma de participación",
+                      minLength: {
+                        value: 3,
+                        message: "Mínimo 3 caracteres"
+                      }
+                    })}
+                  />
+                  {errors.procedenciaDetalle && (
+                    <p className={errorClasses}>
+                      {errors.procedenciaDetalle.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div>
                 <label htmlFor="lugarEvento" className={labelClasses}>
-                  Ciudad de origen
+                  Lugar del evento
                 </label>
                 <select
                   id="lugarEvento"
                   className={selectClasses}
                   {...register("lugarEvento", {
-                    required: "Selecciona la ciudad"
+                    required: "Selecciona el lugar del evento"
                   })}
                 >
                   <option value="">Selecciona...</option>

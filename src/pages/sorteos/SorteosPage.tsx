@@ -80,7 +80,7 @@ export default function SorteosPage() {
               <Input
                 id="premio"
                 fullWidth
-                placeholder="Ej. Tablet, bicicleta, entradas..."
+                placeholder="Escribe aquí el artículo sorteado..."
                 className={inputClasses}
                 value={premio}
                 onChange={(event) => setPremio(event.target.value)}
