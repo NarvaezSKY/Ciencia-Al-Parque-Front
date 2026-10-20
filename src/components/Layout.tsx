@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import logo from "@/assets/Ciencia_al_Parque_blanco_transparente.png";
-import footerBanner from "@/assets/footerbanner.jpeg";
+import BannerEvento from "@/components/BannerEvento";
 import { useAuthStore } from "@/store/auth.store";
 
 const linkClasses = ({ isActive }: { isActive: boolean }) =>
@@ -84,11 +84,7 @@ export default function Layout() {
 
       <footer className="bg-white">
         <hr className="border-slate-200" />
-        <img
-          src={footerBanner}
-          alt="Ciencia al Parque · Registro de asistencias, sorteos y estadísticas en tiempo real"
-          className="mx-auto block w-auto max-h-40 max-w-full object-contain px-4 py-4"
-        />
+        <BannerEvento />
       </footer>
     </div>
   );

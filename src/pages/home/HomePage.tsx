@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import StatCard from "@/components/StatCard";
 import AnimatedNumber from "@/components/AnimatedNumber";
+import BannerEvento from "@/components/BannerEvento";
 import MapaLugares from "@/components/MapaLugares";
 import StarRating from "@/components/StarRating";
 import { useDashboard } from "./hooks/useDashboard";
@@ -172,7 +173,10 @@ export default function HomePage() {
         />
       )}
 
-      <div className="animate-rise-in">
+      <BannerEvento />
+      <hr className="border-slate-200" />
+
+      <div className="animate-rise-in mt-6">
         <header className="flex flex-wrap items-center gap-4">
           <div>
             <h1 className="bg-gradient-to-r from-brand via-brand-light to-accent bg-clip-text text-5xl font-black tracking-tight text-transparent xl:text-6xl">
