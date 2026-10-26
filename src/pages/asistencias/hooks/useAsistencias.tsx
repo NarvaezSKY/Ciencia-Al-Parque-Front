@@ -139,6 +139,10 @@ export const useAsistencias = () => {
     }
   };
 
+  const onLimpiarFormulario = () => {
+    form.reset(DEFAULT_VALUES);
+  };
+
   const onReiniciar = () => {
     reiniciar();
     setDocumento("");
@@ -157,6 +161,7 @@ export const useAsistencias = () => {
     onVerificar,
     onRegistrarRapido,
     onRegistrarCompleto,
+    onLimpiarFormulario,
     onReiniciar
   };
 };

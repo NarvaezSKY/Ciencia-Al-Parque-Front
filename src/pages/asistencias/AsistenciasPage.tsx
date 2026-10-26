@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Chip, Input, Spinner } from "@heroui/react";
+import { Alert, AlertDialog, Button, Card, Chip, Input, Spinner } from "@heroui/react";
 import { Controller } from "react-hook-form";
 import MunicipioSelect, { OPCION_OTRO } from "@/components/MunicipioSelect";
 import StarRating from "@/components/StarRating";
@@ -46,6 +46,7 @@ export default function AsistenciasPage() {
     onVerificar,
     onRegistrarRapido,
     onRegistrarCompleto,
+    onLimpiarFormulario,
     onReiniciar
   } = useAsistencias();
 
@@ -524,7 +525,7 @@ export default function AsistenciasPage() {
                 )}
               </div>
 
-              <div className="sm:col-span-2">
+              <div className="flex gap-2 sm:col-span-2">
                 <Button
                   type="submit"
                   variant="primary"
@@ -533,6 +534,43 @@ export default function AsistenciasPage() {
                 >
                   {isLoading ? <Spinner size="sm" /> : "Registrar asistencia"}
                 </Button>
+
+                <AlertDialog>
+                  <Button type="button" variant="outline" isDisabled={isLoading}>
+                    Limpiar
+                  </Button>
+                  <AlertDialog.Backdrop>
+                    <AlertDialog.Container>
+                      <AlertDialog.Dialog className="sm:max-w-[420px]">
+                        <AlertDialog.Header>
+                          <AlertDialog.Icon status="warning" />
+                          <AlertDialog.Heading>
+                            ¿Limpiar el formulario?
+                          </AlertDialog.Heading>
+                        </AlertDialog.Header>
+                        <AlertDialog.Body>
+                          <p>
+                            Se borrarán los datos ingresados. El documento
+                            verificado se conserva para que puedas volver a
+                            completar el registro.
+                          </p>
+                        </AlertDialog.Body>
+                        <AlertDialog.Footer>
+                          <Button slot="close" variant="outline">
+                            Cancelar
+                          </Button>
+                          <Button
+                            slot="close"
+                            variant="primary"
+                            onPress={onLimpiarFormulario}
+                          >
+                            Sí, limpiar
+                          </Button>
+                        </AlertDialog.Footer>
+                      </AlertDialog.Dialog>
+                    </AlertDialog.Container>
+                  </AlertDialog.Backdrop>
+                </AlertDialog>
               </div>
             </form>
           </Card.Content>
