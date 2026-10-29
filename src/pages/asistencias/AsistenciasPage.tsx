@@ -22,6 +22,16 @@ const PROCEDENCIAS = [
   "Otro"
 ];
 
+const ROLES = ["Publico", "Staff"];
+
+const TIPOS_STAFF = [
+  "Conferencista",
+  "Ponente agenda académica",
+  "Expositor muestras interactivas",
+  "Expositor Colegios",
+  "Organización"
+];
+
 const LUGARES = ["Timbío", "Santander de Quilichao", "Popayán"];
 
 const inputClasses =
@@ -56,11 +66,13 @@ export default function AsistenciasPage() {
     watch,
     control,
     setValue,
+    getValues,
     formState: { errors }
   } = form;
 
   const procedenciaTipo = watch("procedenciaTipo");
   const municipioSeleccion = watch("municipioSeleccion");
+  const rol = watch("rol");
 
   if (resultado) {
     return (
@@ -141,6 +153,42 @@ export default function AsistenciasPage() {
       {!resultado && (
         <Card className="border border-slate-200">
           <Card.Content className="p-6">
+            <div className="mb-5">
+              <span className={labelClasses}>Tipo de participante</span>
+              <div
+                role="group"
+                aria-label="Tipo de participante"
+                className="mt-1 inline-flex rounded-xl border border-slate-300 bg-white p-1"
+              >
+                {ROLES.map((opcion) => {
+                  const activo = rol === opcion;
+                  return (
+                    <button
+                      key={opcion}
+                      type="button"
+                      aria-pressed={activo}
+                      onClick={() =>
+                        setValue("rol", opcion, {
+                          shouldValidate: true,
+                          shouldTouch: true
+                        })
+                      }
+                      className={`rounded-lg px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
+                        activo
+                          ? "bg-brand text-white shadow-sm"
+                          : "text-slate-600 hover:bg-slate-100"
+                      }`}
+                    >
+                      {opcion}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.rol && (
+                <p className={errorClasses}>{errors.rol.message}</p>
+              )}
+            </div>
+
             <label htmlFor="documento" className={labelClasses}>
               Documento de identidad
             </label>
@@ -321,6 +369,34 @@ export default function AsistenciasPage() {
                   <p className={errorClasses}>{errors.telefono.message}</p>
                 )}
               </div>
+
+              {rol === "Staff" && (
+                <div>
+                  <label htmlFor="tipoStaff" className={labelClasses}>
+                    ¿Cómo asiste?
+                  </label>
+                  <select
+                    id="tipoStaff"
+                    className={selectClasses}
+                    {...register("tipoStaff", {
+                      validate: (value) =>
+                        getValues("rol") !== "Staff" ||
+                        Boolean(value && value.trim()) ||
+                        "Selecciona cómo asiste"
+                    })}
+                  >
+                    <option value="">Selecciona...</option>
+                    {TIPOS_STAFF.map((opcion) => (
+                      <option key={opcion} value={opcion}>
+                        {opcion}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.tipoStaff && (
+                    <p className={errorClasses}>{errors.tipoStaff.message}</p>
+                  )}
+                </div>
+              )}
 
               <div>
                 <label htmlFor="procedenciaTipo" className={labelClasses}>

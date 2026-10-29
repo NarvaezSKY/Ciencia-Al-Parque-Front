@@ -4,6 +4,8 @@ export interface IRegistrarReq {
   edad?: number;
   genero?: string;
   telefono?: string;
+  rol?: string;
+  tipoStaff?: string;
   procedenciaTipo?: string;
   procedenciaDetalle?: string;
   municipio?: string;

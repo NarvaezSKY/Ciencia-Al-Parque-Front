@@ -96,6 +96,10 @@ export default function DetalleGanador({
           <Campo etiqueta="Teléfono" valor={datos.telefono} copiable />
           <Campo etiqueta="Edad" valor={datos.edad} />
           <Campo etiqueta="Género" valor={datos.genero} />
+          <Campo etiqueta="Tipo de participante" valor={datos.rol} />
+          {datos.tipoStaff && (
+            <Campo etiqueta="Cómo asiste" valor={datos.tipoStaff} />
+          )}
           <Campo etiqueta="Procedencia" valor={datos.procedenciaTipo} />
           <Campo
             etiqueta="Municipio de procedencia"

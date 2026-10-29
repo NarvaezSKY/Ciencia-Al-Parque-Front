@@ -15,6 +15,8 @@ export interface ParticipanteRes {
   edad: number;
   genero: string;
   telefono: string;
+  rol: string;
+  tipoStaff?: string;
   procedenciaTipo: string;
   municipio: string;
   lugarEvento: string;

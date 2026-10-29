@@ -10,6 +10,8 @@ export interface RegistrarForm {
   edad: number;
   genero: string;
   telefono: string;
+  rol: string;
+  tipoStaff: string;
   procedenciaTipo: string;
   procedenciaDetalle: string;
   municipioSeleccion: string;
@@ -25,6 +27,8 @@ const DEFAULT_VALUES: RegistrarForm = {
   edad: NaN,
   genero: "",
   telefono: "",
+  rol: "Publico",
+  tipoStaff: "",
   procedenciaTipo: "",
   procedenciaDetalle: "",
   municipioSeleccion: "",
@@ -65,7 +69,7 @@ export const useAsistencias = () => {
       toast.error("El documento debe tener entre 5 y 12 dígitos");
       return;
     }
-    form.reset(DEFAULT_VALUES);
+    form.reset({ ...DEFAULT_VALUES, rol: form.getValues("rol") });
     try {
       const res = await verificar(limpio);
       if (res.yaAsistioEnJornadaActual) {
@@ -103,6 +107,9 @@ export const useAsistencias = () => {
       delete payload.procedenciaDetalle;
     } else {
       payload.procedenciaDetalle = detalle;
+    }
+    if (payload.rol !== "Staff") {
+      delete payload.tipoStaff;
     }
 
     try {
