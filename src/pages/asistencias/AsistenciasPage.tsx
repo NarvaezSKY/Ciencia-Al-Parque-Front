@@ -1,4 +1,4 @@
-import { Alert, AlertDialog, Button, Card, Chip, Input, Spinner } from "@heroui/react";
+import { Alert, AlertDialog, Button, Card, Chip, Input, Modal, Spinner } from "@heroui/react";
 import { Controller } from "react-hook-form";
 import MunicipioSelect, { OPCION_OTRO } from "@/components/MunicipioSelect";
 import StarRating from "@/components/StarRating";
@@ -29,10 +29,19 @@ const TIPOS_STAFF = [
   "Ponente agenda académica",
   "Expositor muestras interactivas",
   "Expositor Colegios",
-  "Organización"
+  "Organización",
+  "Mentor",
+  "Evaluador"
 ];
 
 const LUGARES = ["Timbío", "Santander de Quilichao", "Popayán"];
+
+const TEXTO_AUTORIZACION = [
+  "En cumplimiento de la Ley Estatutaria 1581 de 2012, el Decreto 1074 de 2015 y demás normas concordantes sobre protección de datos personales, autorizo de manera previa, expresa e informada al responsable del evento Ciencia al Parque, iniciativa de apropiación social del conocimiento que se realizará en el departamento del Cauca, para recolectar, almacenar, utilizar y tratar los datos personales consignados en este formulario, exclusivamente para gestionar la inscripción, asistencia, participación, certificación, evaluación y seguimiento del evento, así como para realizar registros fotográficos y audiovisuales con fines informativos, educativos, científicos, institucionales y de divulgación de sus actividades, a través de medios físicos y digitales institucionales.",
+  "Conozco que mis datos serán tratados conforme a la política de protección de datos personales del responsable, que podré ejercer mis derechos de conocer, actualizar, rectificar y solicitar la supresión de mis datos, así como revocar la autorización cuando sea procedente, mediante los canales dispuestos para tal fin.",
+  "La autorización para el uso de mi imagen y voz se entiende limitada a las finalidades informadas y no implica su utilización para fines comerciales ajenos al evento.",
+  "En el caso de niños, niñas y adolescentes, el tratamiento de sus datos personales y el uso de su imagen deberán respetar su interés superior, sus derechos fundamentales, su derecho a ser escuchados según su edad y madurez, y contar con la autorización previa e informada de su representante legal cuando corresponda, sin perjuicio de las demás garantías legales aplicables."
+];
 
 const inputClasses =
   "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20";
@@ -589,11 +598,40 @@ export default function AsistenciasPage() {
                     })}
                   />
                   <span>
-                    Autorizo el tratamiento de mis datos personales con fines
-                    estadísticos y administrativos del evento, conforme a la
-                    Ley 1581 de 2012 (Habeas Data).
+                    Autorizo de manera previa, expresa e informada el
+                    tratamiento de mis datos personales conforme a la Ley
+                    Estatutaria 1581 de 2012 (Habeas Data)...
                   </span>
                 </label>
+                <Modal>
+                  <Button
+                    type="button"
+                    variant="tertiary"
+                    size="sm"
+                    className="mt-1 h-auto p-0"
+                  >
+                    Leer más
+                  </Button>
+                  <Modal.Backdrop isDismissable>
+                    <Modal.Container>
+                      <Modal.Dialog className="sm:max-w-[560px]">
+                        <Modal.CloseTrigger />
+                        <Modal.Header>
+                          <Modal.Heading>
+                            Autorización de tratamiento de datos personales
+                          </Modal.Heading>
+                        </Modal.Header>
+                        <Modal.Body className="max-h-[60vh] overflow-y-auto text-sm leading-relaxed text-slate-700">
+                          {TEXTO_AUTORIZACION.map((parrafo, indice) => (
+                            <p key={indice} className="mb-3 last:mb-0">
+                              {parrafo}
+                            </p>
+                          ))}
+                        </Modal.Body>
+                      </Modal.Dialog>
+                    </Modal.Container>
+                  </Modal.Backdrop>
+                </Modal>
                 {errors.aceptaTratamientoDatos && (
                   <p className={errorClasses}>
                     {errors.aceptaTratamientoDatos.message}
