@@ -12,6 +12,7 @@ export interface RegistrarForm {
   telefono: string;
   rol: string;
   tipoStaff: string;
+  staffPassword: string;
   procedenciaTipo: string;
   procedenciaDetalle: string;
   municipioSeleccion: string;
@@ -29,6 +30,7 @@ const DEFAULT_VALUES: RegistrarForm = {
   telefono: "",
   rol: "Publico",
   tipoStaff: "",
+  staffPassword: "",
   procedenciaTipo: "",
   procedenciaDetalle: "",
   municipioSeleccion: "",
@@ -46,9 +48,13 @@ export const useAsistencias = () => {
     documentoVerificado,
     resultado,
     isLoading,
+    isValidandoStaff,
+    claveStaffValidada,
     cargarJornadaActual,
     verificar,
     registrar,
+    validarClaveStaff,
+    invalidarClaveStaff,
     reiniciar
   } = useAsistenciasStore();
 
@@ -69,7 +75,8 @@ export const useAsistencias = () => {
       toast.error("El documento debe tener entre 5 y 12 dígitos");
       return;
     }
-    form.reset({ ...DEFAULT_VALUES, rol: form.getValues("rol") });
+    const { rol, staffPassword } = form.getValues();
+    form.reset({ ...DEFAULT_VALUES, rol, staffPassword });
     try {
       const res = await verificar(limpio);
       if (res.yaAsistioEnJornadaActual) {
@@ -81,6 +88,47 @@ export const useAsistencias = () => {
       }
     } catch (err) {
       toast.error(getApiErrorMessage(err, "No se pudo verificar el documento"));
+    }
+  };
+
+  const onValidarClaveStaff = async () => {
+    const password = form.getValues("staffPassword");
+    if (!password) {
+      form.setError("staffPassword", {
+        type: "manual",
+        message: "Ingresa la contraseña de staff"
+      });
+      return;
+    }
+
+    try {
+      await validarClaveStaff(password);
+      form.clearErrors("staffPassword");
+      toast.success("Contraseña de staff verificada");
+    } catch (err) {
+      const body = getErrorBody(err);
+      const message =
+        body?.code === "STAFF_PASSWORD_INVALIDA"
+          ? "Contraseña de staff incorrecta"
+          : getApiErrorMessage(
+              err,
+              "No se pudo validar la contraseña de staff"
+            );
+      form.setError("staffPassword", { type: "manual", message });
+      toast.error(message);
+    }
+  };
+
+  const onCambiarRol = (opcion: string) => {
+    form.setValue("rol", opcion, {
+      shouldValidate: true,
+      shouldTouch: true
+    });
+
+    if (opcion !== "Staff") {
+      form.setValue("staffPassword", "");
+      form.clearErrors("staffPassword");
+      invalidarClaveStaff();
     }
   };
 
@@ -97,7 +145,20 @@ export const useAsistencias = () => {
   const onRegistrarCompleto = async (data: RegistrarForm) => {
     if (!documentoVerificado) return;
 
-    const { municipioSeleccion: _municipioSeleccion, ...campos } = data;
+    if (data.rol === "Staff" && !claveStaffValidada) {
+      form.setError("staffPassword", {
+        type: "manual",
+        message: "Verifica la contraseña de staff antes de registrar"
+      });
+      toast.error("Debes verificar la contraseña de staff");
+      return;
+    }
+
+    const {
+      municipioSeleccion: _municipioSeleccion,
+      staffPassword,
+      ...campos
+    } = data;
     const detalle = campos.procedenciaDetalle?.trim();
     const payload: IRegistrarReq = {
       ...campos,
@@ -108,8 +169,11 @@ export const useAsistencias = () => {
     } else {
       payload.procedenciaDetalle = detalle;
     }
-    if (payload.rol !== "Staff") {
+    if (payload.rol === "Staff") {
+      payload.staffPassword = staffPassword;
+    } else {
       delete payload.tipoStaff;
+      delete payload.staffPassword;
     }
 
     try {
@@ -117,6 +181,22 @@ export const useAsistencias = () => {
       toast.success(res.mensaje);
     } catch (err) {
       const body = getErrorBody(err);
+
+      if (
+        body?.code === "STAFF_PASSWORD_INVALIDA" ||
+        body?.code === "STAFF_PASSWORD_REQUERIDA"
+      ) {
+        invalidarClaveStaff();
+        form.setError("staffPassword", {
+          type: "manual",
+          message:
+            body.message ?? "Debes verificar la contraseña de staff nuevamente"
+        });
+        toast.error(
+          body.message ?? "Debes verificar la contraseña de staff nuevamente"
+        );
+        return;
+      }
 
       if (body?.code === "REQUIERE_REGISTRO_COMPLETO") {
         toast.error("Debes completar todos los datos del participante");
@@ -148,6 +228,7 @@ export const useAsistencias = () => {
 
   const onLimpiarFormulario = () => {
     form.reset(DEFAULT_VALUES);
+    invalidarClaveStaff();
   };
 
   const onReiniciar = () => {
@@ -165,10 +246,15 @@ export const useAsistencias = () => {
     documentoVerificado,
     resultado,
     isLoading,
+    isValidandoStaff,
+    claveStaffValidada,
     onVerificar,
+    onValidarClaveStaff,
+    onCambiarRol,
     onRegistrarRapido,
     onRegistrarCompleto,
     onLimpiarFormulario,
-    onReiniciar
+    onReiniciar,
+    invalidarClaveStaff
   };
 };

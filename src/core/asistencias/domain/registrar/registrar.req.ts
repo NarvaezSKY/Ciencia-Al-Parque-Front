@@ -6,6 +6,7 @@ export interface IRegistrarReq {
   telefono?: string;
   rol?: string;
   tipoStaff?: string;
+  staffPassword?: string;
   procedenciaTipo?: string;
   procedenciaDetalle?: string;
   municipio?: string;

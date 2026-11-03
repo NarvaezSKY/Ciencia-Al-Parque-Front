@@ -1,6 +1,7 @@
 import { axiosInstance } from "@/config/instance";
 import type { IAsistenciasRepository } from "../domain/asistencias.repository";
 import type { IRegistrarReq, IRegistrarRes } from "../domain/registrar";
+import type { IValidarStaffReq, IValidarStaffRes } from "../domain/validar-staff";
 import type { IVerificarReq, IVerificarRes } from "../domain/verificar";
 
 export const asistenciasRepository: IAsistenciasRepository = {
@@ -22,6 +23,20 @@ export const asistenciasRepository: IAsistenciasRepository = {
         IRegistrarRes & { asistencia?: IRegistrarRes }
       >("/asistencias", data);
       return response.data.asistencia ?? response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async validarClaveStaff(
+    data: IValidarStaffReq
+  ): Promise<IValidarStaffRes> {
+    try {
+      const response = await axiosInstance.post<IValidarStaffRes>(
+        "/asistencias/staff/validar",
+        data
+      );
+      return response.data;
     } catch (error) {
       throw error;
     }

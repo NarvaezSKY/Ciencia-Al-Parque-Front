@@ -62,11 +62,16 @@ export default function AsistenciasPage() {
     documentoVerificado,
     resultado,
     isLoading,
+    isValidandoStaff,
+    claveStaffValidada,
     onVerificar,
+    onValidarClaveStaff,
+    onCambiarRol,
     onRegistrarRapido,
     onRegistrarCompleto,
     onLimpiarFormulario,
-    onReiniciar
+    onReiniciar,
+    invalidarClaveStaff
   } = useAsistencias();
 
   const {
@@ -176,12 +181,7 @@ export default function AsistenciasPage() {
                       key={opcion}
                       type="button"
                       aria-pressed={activo}
-                      onClick={() =>
-                        setValue("rol", opcion, {
-                          shouldValidate: true,
-                          shouldTouch: true
-                        })
-                      }
+                      onClick={() => onCambiarRol(opcion)}
                       className={`rounded-lg px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
                         activo
                           ? "bg-brand text-white shadow-sm"
@@ -197,6 +197,60 @@ export default function AsistenciasPage() {
                 <p className={errorClasses}>{errors.rol.message}</p>
               )}
             </div>
+
+            {rol === "Staff" && (
+              <div className="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <label htmlFor="staffPassword" className={labelClasses}>
+                  Contraseña de staff
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    id="staffPassword"
+                    type="password"
+                    fullWidth
+                    placeholder="Ingresa la contraseña de staff"
+                    className={inputClasses}
+                    {...register("staffPassword", {
+                      validate: (value) =>
+                        Boolean(value) || "Ingresa la contraseña de staff",
+                      onChange: () => invalidarClaveStaff()
+                    })}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void onValidarClaveStaff();
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="primary"
+                    isDisabled={isValidandoStaff}
+                    onPress={() => void onValidarClaveStaff()}
+                  >
+                    {isValidandoStaff ? <Spinner size="sm" /> : "Verificar"}
+                  </Button>
+                </div>
+                {errors.staffPassword && (
+                  <p className={errorClasses}>
+                    {errors.staffPassword.message}
+                  </p>
+                )}
+                {claveStaffValidada && (
+                  <Alert status="success" className="mt-3">
+                    <Alert.Content>
+                      <Alert.Title>Contraseña verificada</Alert.Title>
+                      <Alert.Description>
+                        Ya puedes completar el registro como staff.
+                      </Alert.Description>
+                    </Alert.Content>
+                  </Alert>
+                )}
+                <p className="mt-2 text-xs text-slate-500">
+                  Necesaria para registrar a una persona como staff.
+                </p>
+              </div>
+            )}
 
             <label htmlFor="documento" className={labelClasses}>
               Documento de identidad
