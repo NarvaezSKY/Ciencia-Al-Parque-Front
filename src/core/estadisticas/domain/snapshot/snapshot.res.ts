@@ -19,5 +19,12 @@ export interface IEstadisticasSnapshot {
   calificacionPromedio: number;
   calificacionVotos: number;
   ultimaHora: { hora: string; total: number }[];
+  staff: {
+    asistentesUnicos: number;
+    totalAsistencias: number;
+    porDia: { fecha: string; total: number }[];
+    porJornada: { clave: string; fecha: string; turno: Turno; total: number }[];
+    porParticipacion: { tipo: string; total: number }[];
+  };
   actualizadoEn: string;
 }

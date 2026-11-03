@@ -587,51 +587,59 @@ export default function AsistenciasPage() {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="flex items-start gap-2 text-sm text-slate-700">
+                <div className="flex items-start gap-2 text-sm text-slate-700">
                   <input
+                    id="aceptaTratamientoDatos"
                     type="checkbox"
-                    className="mt-1 h-4 w-4 accent-brand"
+                    className="mt-1 h-4 w-4 shrink-0 accent-brand"
                     {...register("aceptaTratamientoDatos", {
                       validate: (value) =>
                         value === true ||
                         "Debes aceptar el tratamiento de datos (Ley 1581)"
                     })}
                   />
-                  <span>
-                    Autorizo de manera previa, expresa e informada el
-                    tratamiento de mis datos personales conforme a la Ley
-                    Estatutaria 1581 de 2012 (Habeas Data)...
-                  </span>
-                </label>
-                <Modal>
-                  <Button
-                    type="button"
-                    variant="tertiary"
-                    size="sm"
-                    className="mt-1 h-auto p-0"
-                  >
-                    Leer más
-                  </Button>
-                  <Modal.Backdrop isDismissable>
-                    <Modal.Container>
-                      <Modal.Dialog className="sm:max-w-[560px]">
-                        <Modal.CloseTrigger />
-                        <Modal.Header>
-                          <Modal.Heading>
-                            Autorización de tratamiento de datos personales
-                          </Modal.Heading>
-                        </Modal.Header>
-                        <Modal.Body className="max-h-[60vh] overflow-y-auto text-sm leading-relaxed text-slate-700">
-                          {TEXTO_AUTORIZACION.map((parrafo, indice) => (
-                            <p key={indice} className="mb-3 last:mb-0">
-                              {parrafo}
-                            </p>
-                          ))}
-                        </Modal.Body>
-                      </Modal.Dialog>
-                    </Modal.Container>
-                  </Modal.Backdrop>
-                </Modal>
+                  <div className="leading-relaxed">
+                    <label
+                      htmlFor="aceptaTratamientoDatos"
+                      className="cursor-pointer"
+                    >
+                      En cumplimiento de la Ley Estatutaria 1581 de 2012, el
+                      Decreto 1074 de 2015 y demás normas concordantes sobre
+                      protección de datos personales, autorizo de manera previa,
+                      expresa e informada al responsable del evento Ciencia al
+                      Parque...
+                    </label>{" "}
+                    <Modal>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto min-w-0 bg-transparent p-0 text-brand hover:bg-transparent hover:underline"
+                      >
+                        Leer más
+                      </Button>
+                      <Modal.Backdrop isDismissable>
+                        <Modal.Container>
+                          <Modal.Dialog className="sm:max-w-[560px]">
+                            <Modal.CloseTrigger />
+                            <Modal.Header>
+                              <Modal.Heading>
+                                Autorización de tratamiento de datos personales
+                              </Modal.Heading>
+                            </Modal.Header>
+                            <Modal.Body className="max-h-[60vh] overflow-y-auto text-sm leading-relaxed text-slate-700">
+                              {TEXTO_AUTORIZACION.map((parrafo, indice) => (
+                                <p key={indice} className="mb-3 last:mb-0">
+                                  {parrafo}
+                                </p>
+                              ))}
+                            </Modal.Body>
+                          </Modal.Dialog>
+                        </Modal.Container>
+                      </Modal.Backdrop>
+                    </Modal>
+                  </div>
+                </div>
                 {errors.aceptaTratamientoDatos && (
                   <p className={errorClasses}>
                     {errors.aceptaTratamientoDatos.message}

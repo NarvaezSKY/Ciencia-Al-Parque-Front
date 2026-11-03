@@ -159,6 +159,12 @@ export default function HomePage() {
         : 1,
       hora: snapshot
         ? Math.max(...snapshot.ultimaHora.map((item) => item.total), 1)
+        : 1,
+      staffJornada: snapshot
+        ? Math.max(...snapshot.staff.porJornada.map((item) => item.total), 1)
+        : 1,
+      staffDia: snapshot
+        ? Math.max(...snapshot.staff.porDia.map((item) => item.total), 1)
         : 1
     }),
     [snapshot]
@@ -426,6 +432,66 @@ export default function HomePage() {
                   </div>
                 )}
               </Panel>
+            </div>
+
+            <div className="mt-6">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-brand">
+                    Staff
+                  </p>
+                  <h2 className="mt-1 text-2xl font-black text-slate-900 xl:text-3xl">
+                    Asistencia de staff
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Datos de staff separados de la asistencia de público.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <StatCard
+                  titulo="Staff · asistentes únicos"
+                  valor={snapshot.staff.asistentesUnicos}
+                  descripcion="Documentos distintos de staff"
+                  accent="sky"
+                  icon={IconoPersonas}
+                />
+
+                <Panel titulo="Staff por jornada">
+                  {snapshot.staff.porJornada.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Aún no hay asistencias de staff registradas.
+                    </p>
+                  ) : (
+                    snapshot.staff.porJornada.map((item) => (
+                      <Barra
+                        key={item.clave}
+                        etiqueta={item.clave}
+                        total={item.total}
+                        maximo={maximos.staffJornada}
+                        color="from-brand to-brand-300"
+                      />
+                    ))
+                  )}
+                </Panel>
+
+                <Panel titulo="Staff por día">
+                  {snapshot.staff.porDia.length === 0 ? (
+                    <p className="text-sm text-slate-500">Sin datos todavía.</p>
+                  ) : (
+                    snapshot.staff.porDia.map((item) => (
+                      <Barra
+                        key={item.fecha}
+                        etiqueta={item.fecha}
+                        total={item.total}
+                        maximo={maximos.staffDia}
+                        color="from-brand-300 to-brand-light"
+                      />
+                    ))
+                  )}
+                </Panel>
+              </div>
             </div>
 
             <p className="mt-6 text-center text-xs text-slate-500">
