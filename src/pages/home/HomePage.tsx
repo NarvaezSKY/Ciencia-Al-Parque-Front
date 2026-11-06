@@ -6,6 +6,7 @@ import MapaLugares from "@/components/MapaLugares";
 import StarRating from "@/components/StarRating";
 import { useDashboard } from "./hooks/useDashboard";
 import WinnerCelebration from "./components/WinnerCelebration";
+import LineaEdad from "./components/LineaEdad";
 import { useEstadisticasStore } from "@/store/estadisticas.store";
 import type { ISorteoResultado } from "@/core/sorteos/domain/realizar";
 import { etiquetaTurno } from "@/utils/turno";
@@ -165,6 +166,15 @@ export default function HomePage() {
         : 1,
       staffDia: snapshot
         ? Math.max(...snapshot.staff.porDia.map((item) => item.total), 1)
+        : 1,
+      genero: snapshot
+        ? Math.max(...snapshot.porGenero.map((item) => item.total), 1)
+        : 1,
+      staffParticipacion: snapshot
+        ? Math.max(
+            ...snapshot.staff.porParticipacion.map((item) => item.total),
+            1
+          )
         : 1
     }),
     [snapshot]
@@ -492,6 +502,57 @@ export default function HomePage() {
                   )}
                 </Panel>
               </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-6">
+              <Panel
+                titulo="Distribución por edad"
+                descripcion="Personas únicas por rango de edad (público)"
+              >
+                <LineaEdad data={snapshot.porEdad} />
+              </Panel>
+
+              <Panel
+                titulo="Distribución por género"
+                descripcion="Personas únicas por género (público)"
+              >
+                {snapshot.porGenero.length === 0 ? (
+                  <p className="text-sm text-slate-500">
+                    Aún no hay datos de género registrados.
+                  </p>
+                ) : (
+                  snapshot.porGenero.map((item) => (
+                    <Barra
+                      key={item.genero}
+                      etiqueta={item.genero}
+                      total={item.total}
+                      maximo={maximos.genero}
+                      color="from-magenta to-brand-light"
+                    />
+                  ))
+                )}
+              </Panel>
+
+              <Panel
+                titulo="Distribución por tipo (Staff)"
+                descripcion="Staff por cómo asiste"
+              >
+                {snapshot.staff.porParticipacion.length === 0 ? (
+                  <p className="text-sm text-slate-500">
+                    Aún no hay registros de staff.
+                  </p>
+                ) : (
+                  snapshot.staff.porParticipacion.map((item) => (
+                    <Barra
+                      key={item.tipo}
+                      etiqueta={item.tipo}
+                      total={item.total}
+                      maximo={maximos.staffParticipacion}
+                      color="from-brand to-brand-300"
+                    />
+                  ))
+                )}
+              </Panel>
             </div>
 
             <p className="mt-6 text-center text-xs text-slate-500">

@@ -11,6 +11,8 @@ export interface IEstadisticasSnapshot {
   };
   porJornada: { clave: string; total: number }[];
   porDia: { fecha: string; total: number }[];
+  porEdad: { edad: number; total: number }[];
+  porGenero: { genero: string; total: number }[];
   porLugar: { lugar: string; total: number }[];
   asistentesUnicos: number;
   totalAsistencias: number;
