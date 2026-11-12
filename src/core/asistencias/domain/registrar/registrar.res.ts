@@ -2,6 +2,7 @@ import type { ParticipanteRes, Turno } from "@/types";
 
 export interface IRegistrarRes {
   id: string;
+  municipio: string;
   clave: string;
   fecha: string;
   turno: Turno;

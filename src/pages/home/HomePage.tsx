@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import StatCard from "@/components/StatCard";
-import AnimatedNumber from "@/components/AnimatedNumber";
 import BannerEvento from "@/components/BannerEvento";
 import MapaLugares from "@/components/MapaLugares";
 import StarRating from "@/components/StarRating";
@@ -9,7 +8,6 @@ import WinnerCelebration from "./components/WinnerCelebration";
 import LineaEdad from "./components/LineaEdad";
 import { useEstadisticasStore } from "@/store/estadisticas.store";
 import type { ISorteoResultado } from "@/core/sorteos/domain/realizar";
-import { etiquetaTurno } from "@/utils/turno";
 
 function useReloj() {
   const [ahora, setAhora] = useState(() => new Date());
@@ -285,53 +283,6 @@ export default function HomePage() {
                 accent="magenta"
                 icon={IconoRefresh}
               />
-            </div>
-
-            <div className="animate-rise-in mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-brand">
-                    Jornada actual
-                  </p>
-                  <h2 className="mt-1 text-3xl font-black text-slate-900 xl:text-4xl">
-                    {snapshot.jornadaActual.clave} ·{" "}
-                    {etiquetaTurno(snapshot.jornadaActual.turno)}
-                  </h2>
-                  <p className="mt-1 text-slate-500">
-                    {snapshot.jornadaActual.fecha}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
-                <div className="rounded-2xl border border-brand/30 bg-brand/5 p-6 text-center">
-                  <p className="text-sm font-semibold uppercase tracking-widest text-brand">
-                    Asistencias
-                  </p>
-                  <AnimatedNumber
-                    value={snapshot.jornadaActual.total}
-                    className="mt-2 text-6xl font-black text-slate-900 xl:text-7xl"
-                  />
-                </div>
-                <div className="rounded-2xl border border-accent/50 bg-accent/10 p-6 text-center">
-                  <p className="text-sm font-semibold uppercase tracking-widest text-green-600">
-                    Primera vez
-                  </p>
-                  <AnimatedNumber
-                    value={snapshot.jornadaActual.primeraVez}
-                    className="mt-2 text-6xl font-black text-slate-900 xl:text-7xl"
-                  />
-                </div>
-                <div className="rounded-2xl border border-magenta/40 bg-magenta/5 p-6 text-center">
-                  <p className="text-sm font-semibold uppercase tracking-widest text-magenta">
-                    Recurrentes
-                  </p>
-                  <AnimatedNumber
-                    value={snapshot.jornadaActual.recurrentes}
-                    className="mt-2 text-6xl font-black text-slate-900 xl:text-7xl"
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">

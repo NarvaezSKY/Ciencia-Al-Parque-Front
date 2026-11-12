@@ -8,13 +8,13 @@ import { asistenciasRepository } from "@/core/asistencias/infrastructure/asisten
 import type { IRegistrarReq, IRegistrarRes } from "@/core/asistencias/domain/registrar";
 import type { IValidarStaffRes } from "@/core/asistencias/domain/validar-staff";
 import type { IVerificarRes } from "@/core/asistencias/domain/verificar";
-import { getJornadaActualUseCase } from "@/core/jornadas/application";
+import { getJornadasEventoUseCase } from "@/core/jornadas/application";
 import { jornadasRepository } from "@/core/jornadas/infrastructure/jornadas.repository";
-import type { JornadaActual } from "@/types";
+import type { JornadaEvento } from "@/types";
 import { getApiErrorMessage } from "@/utils/apiError";
 
 interface AsistenciasState {
-  jornadaActual: JornadaActual | null;
+  jornadasEvento: JornadaEvento[];
   verificacion: IVerificarRes | null;
   documentoVerificado: string | null;
   resultado: IRegistrarRes | null;
@@ -22,8 +22,8 @@ interface AsistenciasState {
   isValidandoStaff: boolean;
   claveStaffValidada: boolean;
   error: string | null;
-  cargarJornadaActual: () => Promise<void>;
-  verificar: (documento: string) => Promise<IVerificarRes>;
+  cargarJornadasEvento: () => Promise<void>;
+  verificar: (documento: string, jornadaId?: string) => Promise<IVerificarRes>;
   registrar: (data: IRegistrarReq) => Promise<IRegistrarRes>;
   validarClaveStaff: (password: string) => Promise<IValidarStaffRes>;
   invalidarClaveStaff: () => void;
@@ -31,7 +31,7 @@ interface AsistenciasState {
 }
 
 export const useAsistenciasStore = create<AsistenciasState>((set) => ({
-  jornadaActual: null,
+  jornadasEvento: [],
   verificacion: null,
   documentoVerificado: null,
   resultado: null,
@@ -40,19 +40,22 @@ export const useAsistenciasStore = create<AsistenciasState>((set) => ({
   claveStaffValidada: false,
   error: null,
 
-  cargarJornadaActual: async () => {
+  cargarJornadasEvento: async () => {
     try {
-      const jornada = await getJornadaActualUseCase(jornadasRepository)();
-      set({ jornadaActual: jornada });
+      const jornadas = await getJornadasEventoUseCase(jornadasRepository)();
+      set({ jornadasEvento: jornadas });
     } catch {
-      set({ jornadaActual: null });
+      set({ jornadasEvento: [] });
     }
   },
 
-  verificar: async (documento) => {
+  verificar: async (documento, jornadaId) => {
     set({ isLoading: true, error: null, resultado: null });
     try {
-      const result = await verificarUseCase(asistenciasRepository)({ documento });
+      const result = await verificarUseCase(asistenciasRepository)({
+        documento,
+        jornadaId
+      });
       set({
         isLoading: false,
         verificacion: result,

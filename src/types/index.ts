@@ -24,19 +24,17 @@ export interface ParticipanteRes {
   destacado: string;
 }
 
-export interface JornadaActual {
-  id?: string;
+export interface JornadaEvento {
+  id: string;
+  municipio: string;
   fecha: string;
   turno: Turno;
   clave: string;
-  inicio?: string;
-  fin?: string;
-  existe: boolean;
-  totalAsistentes: number;
 }
 
 export interface JornadaConRegistros {
   id: string;
+  municipio: string;
   fecha: string;
   turno: Turno;
   clave: string;

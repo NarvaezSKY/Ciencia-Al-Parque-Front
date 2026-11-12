@@ -1,7 +1,7 @@
-import type { IJornadaActualRes } from "./actual";
 import type { IJornadaConRegistrosRes } from "./con-registros";
+import type { IJornadaEventoRes } from "./evento";
 
 export interface IJornadasRepository {
-  getActual(): Promise<IJornadaActualRes>;
+  getEvento(): Promise<IJornadaEventoRes[]>;
   getConRegistros(): Promise<IJornadaConRegistrosRes[]>;
 }

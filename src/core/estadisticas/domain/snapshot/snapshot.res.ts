@@ -1,14 +1,6 @@
 import type { Turno } from "@/types";
 
 export interface IEstadisticasSnapshot {
-  jornadaActual: {
-    clave: string;
-    fecha: string;
-    turno: Turno;
-    total: number;
-    primeraVez: number;
-    recurrentes: number;
-  };
   porJornada: { clave: string; total: number }[];
   porDia: { fecha: string; total: number }[];
   porEdad: { edad: number; total: number }[];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useAsistenciasStore } from "@/store/asistencias.store";
@@ -18,6 +18,8 @@ export interface RegistrarForm {
   municipioSeleccion: string;
   municipio: string;
   lugarEvento: string;
+  fechaEvento: string;
+  turnoEvento: string;
   calificacion: number;
   destacado: string;
   aceptaTratamientoDatos: boolean;
@@ -36,6 +38,8 @@ const DEFAULT_VALUES: RegistrarForm = {
   municipioSeleccion: "",
   municipio: "",
   lugarEvento: "",
+  fechaEvento: "",
+  turnoEvento: "",
   calificacion: NaN,
   destacado: "",
   aceptaTratamientoDatos: false
@@ -43,14 +47,14 @@ const DEFAULT_VALUES: RegistrarForm = {
 
 export const useAsistencias = () => {
   const {
-    jornadaActual,
+    jornadasEvento,
     verificacion,
     documentoVerificado,
     resultado,
     isLoading,
     isValidandoStaff,
     claveStaffValidada,
-    cargarJornadaActual,
+    cargarJornadasEvento,
     verificar,
     registrar,
     validarClaveStaff,
@@ -65,9 +69,68 @@ export const useAsistencias = () => {
     mode: "onTouched"
   });
 
+  const lugarEvento = form.watch("lugarEvento");
+  const fechaEvento = form.watch("fechaEvento");
+  const turnoEvento = form.watch("turnoEvento");
+
   useEffect(() => {
-    void cargarJornadaActual();
-  }, [cargarJornadaActual]);
+    void cargarJornadasEvento();
+  }, [cargarJornadasEvento]);
+
+  const lugaresEvento = useMemo(
+    () => [...new Set(jornadasEvento.map((jornada) => jornada.municipio))],
+    [jornadasEvento]
+  );
+
+  const fechasDisponibles = useMemo(() => {
+    const fechas = jornadasEvento
+      .filter((jornada) => jornada.municipio === lugarEvento)
+      .map((jornada) => jornada.fecha);
+    return [...new Set(fechas)].sort();
+  }, [jornadasEvento, lugarEvento]);
+
+  const turnosDisponibles = useMemo(
+    () =>
+      jornadasEvento.filter(
+        (jornada) =>
+          jornada.municipio === lugarEvento && jornada.fecha === fechaEvento
+      ),
+    [jornadasEvento, lugarEvento, fechaEvento]
+  );
+
+  const jornadaSeleccionada = useMemo(
+    () =>
+      jornadasEvento.find(
+        (jornada) =>
+          jornada.municipio === lugarEvento &&
+          jornada.fecha === fechaEvento &&
+          jornada.turno === turnoEvento
+      ) ?? null,
+    [jornadasEvento, lugarEvento, fechaEvento, turnoEvento]
+  );
+
+  useEffect(() => {
+    if (!documentoVerificado || !jornadaSeleccionada) return;
+
+    let cancelado = false;
+    verificar(documentoVerificado, jornadaSeleccionada.id)
+      .then((res) => {
+        if (!cancelado && res.yaAsistioEnJornada) {
+          toast.warning("Este documento ya asistió en la jornada seleccionada");
+        }
+      })
+      .catch((err) => {
+        if (!cancelado) {
+          toast.error(
+            getApiErrorMessage(err, "No se pudo verificar la jornada")
+          );
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [documentoVerificado, jornadaSeleccionada, verificar]);
 
   const onVerificar = async () => {
     const limpio = documento.trim();
@@ -79,10 +142,8 @@ export const useAsistencias = () => {
     form.reset({ ...DEFAULT_VALUES, rol, staffPassword });
     try {
       const res = await verificar(limpio);
-      if (res.yaAsistioEnJornadaActual) {
-        toast.warning("Este documento ya asistió en la jornada actual");
-      } else if (res.existe) {
-        toast.success("Participante encontrado. Registra su asistencia.");
+      if (res.existe) {
+        toast.success("Participante encontrado. Selecciona la jornada.");
       } else {
         toast.info("Documento nuevo: completa el registro del participante.");
       }
@@ -132,10 +193,44 @@ export const useAsistencias = () => {
     }
   };
 
+  const onCambiarLugarEvento = (valor: string) => {
+    form.setValue("lugarEvento", valor, {
+      shouldValidate: true,
+      shouldTouch: true
+    });
+    form.setValue("fechaEvento", "");
+    form.setValue("turnoEvento", "");
+    form.clearErrors(["fechaEvento", "turnoEvento"]);
+  };
+
+  const onCambiarFechaEvento = (valor: string) => {
+    form.setValue("fechaEvento", valor, {
+      shouldValidate: true,
+      shouldTouch: true
+    });
+    form.setValue("turnoEvento", "");
+    form.clearErrors("turnoEvento");
+  };
+
+  const onCambiarTurnoEvento = (valor: string) => {
+    form.setValue("turnoEvento", valor, {
+      shouldValidate: true,
+      shouldTouch: true
+    });
+  };
+
   const onRegistrarRapido = async () => {
     if (!documentoVerificado) return;
+    if (!jornadaSeleccionada) {
+      toast.error("Selecciona el lugar, el día y la jornada");
+      return;
+    }
+
     try {
-      const res = await registrar({ documento: documentoVerificado });
+      const res = await registrar({
+        documento: documentoVerificado,
+        jornadaId: jornadaSeleccionada.id
+      });
       toast.success(res.mensaje);
     } catch (err) {
       toast.error(getApiErrorMessage(err, "Error al registrar la asistencia"));
@@ -144,6 +239,10 @@ export const useAsistencias = () => {
 
   const onRegistrarCompleto = async (data: RegistrarForm) => {
     if (!documentoVerificado) return;
+    if (!jornadaSeleccionada) {
+      toast.error("Selecciona el lugar, el día y la jornada");
+      return;
+    }
 
     if (data.rol === "Staff" && !claveStaffValidada) {
       form.setError("staffPassword", {
@@ -157,12 +256,17 @@ export const useAsistencias = () => {
     const {
       municipioSeleccion: _municipioSeleccion,
       staffPassword,
+      fechaEvento: _fechaEvento,
+      turnoEvento: _turnoEvento,
+      lugarEvento: _lugarEvento,
       ...campos
     } = data;
     const detalle = campos.procedenciaDetalle?.trim();
     const payload: IRegistrarReq = {
       ...campos,
-      documento: documentoVerificado
+      documento: documentoVerificado,
+      jornadaId: jornadaSeleccionada.id,
+      lugarEvento: jornadaSeleccionada.municipio
     };
     if (!detalle) {
       delete payload.procedenciaDetalle;
@@ -241,7 +345,11 @@ export const useAsistencias = () => {
     documento,
     setDocumento,
     form,
-    jornadaActual,
+    jornadasEvento,
+    lugaresEvento,
+    fechasDisponibles,
+    turnosDisponibles,
+    jornadaSeleccionada,
     verificacion,
     documentoVerificado,
     resultado,
@@ -251,6 +359,9 @@ export const useAsistencias = () => {
     onVerificar,
     onValidarClaveStaff,
     onCambiarRol,
+    onCambiarLugarEvento,
+    onCambiarFechaEvento,
+    onCambiarTurnoEvento,
     onRegistrarRapido,
     onRegistrarCompleto,
     onLimpiarFormulario,

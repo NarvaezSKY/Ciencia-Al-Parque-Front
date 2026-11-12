@@ -35,8 +35,6 @@ const TIPOS_STAFF = [
   "Evaluador"
 ];
 
-const LUGARES = ["Timbío", "Santander de Quilichao", "Popayán"];
-
 const TEXTO_AUTORIZACION = [
   "En cumplimiento de la Ley Estatutaria 1581 de 2012, el Decreto 1074 de 2015 y demás normas concordantes sobre protección de datos personales, autorizo de manera previa, expresa e informada al responsable del evento Ciencia al Parque, iniciativa de apropiación social del conocimiento que se realizará en el departamento del Cauca, para recolectar, almacenar, utilizar y tratar los datos personales consignados en este formulario, exclusivamente para gestionar la inscripción, asistencia, participación, certificación, evaluación y seguimiento del evento, así como para realizar registros fotográficos y audiovisuales con fines informativos, educativos, científicos, institucionales y de divulgación de sus actividades, a través de medios físicos y digitales institucionales.",
   "Conozco que mis datos serán tratados conforme a la política de protección de datos personales del responsable, que podré ejercer mis derechos de conocer, actualizar, rectificar y solicitar la supresión de mis datos, así como revocar la autorización cuando sea procedente, mediante los canales dispuestos para tal fin.",
@@ -90,7 +88,10 @@ export default function AsistenciasPage() {
     documento,
     setDocumento,
     form,
-    jornadaActual,
+    lugaresEvento,
+    fechasDisponibles,
+    turnosDisponibles,
+    jornadaSeleccionada,
     verificacion,
     documentoVerificado,
     resultado,
@@ -100,6 +101,9 @@ export default function AsistenciasPage() {
     onVerificar,
     onValidarClaveStaff,
     onCambiarRol,
+    onCambiarLugarEvento,
+    onCambiarFechaEvento,
+    onCambiarTurnoEvento,
     onRegistrarRapido,
     onRegistrarCompleto,
     onLimpiarFormulario,
@@ -122,6 +126,8 @@ export default function AsistenciasPage() {
   const procedenciaTipo = watch("procedenciaTipo");
   const municipioSeleccion = watch("municipioSeleccion");
   const rol = watch("rol");
+  const lugarEvento = watch("lugarEvento");
+  const fechaEvento = watch("fechaEvento");
 
   if (resultado) {
     return (
@@ -160,6 +166,10 @@ export default function AsistenciasPage() {
                 <dd className="font-medium">{resultado.fecha}</dd>
               </div>
               <div>
+                <dt className="text-slate-500">Lugar del evento</dt>
+                <dd className="font-medium">{resultado.municipio}</dd>
+              </div>
+              <div>
                 <dt className="text-slate-500">Turno</dt>
                 <dd className="font-medium">
                   {etiquetaTurno(resultado.turno)}
@@ -191,12 +201,6 @@ export default function AsistenciasPage() {
           Verifica el documento de la persona y registra su asistencia al
           evento.
         </p>
-        {jornadaActual && (
-          <Chip className="mt-3" color="accent" variant="soft">
-            Jornada vigente: {jornadaActual.clave} ·{" "}
-            {etiquetaTurno(jornadaActual.turno)}
-          </Chip>
-        )}
       </div>
 
       {!resultado && (
@@ -330,26 +334,148 @@ export default function AsistenciasPage() {
               </Button>
             </div>
 
-            {verificacion?.yaAsistioEnJornadaActual && (
+            <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="mb-3 text-sm font-medium text-slate-700">
+                Jornada a registrar
+              </p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                  <label htmlFor="lugarEvento" className={labelClasses}>
+                    Lugar del evento
+                  </label>
+                  <Controller
+                    control={control}
+                    name="lugarEvento"
+                    rules={{ required: "Selecciona el lugar del evento" }}
+                    render={({ field }) => (
+                      <select
+                        id="lugarEvento"
+                        className={selectClasses}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        onChange={(event) =>
+                          onCambiarLugarEvento(event.target.value)
+                        }
+                      >
+                        <option value="">Selecciona...</option>
+                        {lugaresEvento.map((opcion) => (
+                          <option key={opcion} value={opcion}>
+                            {opcion}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.lugarEvento && (
+                    <p className={errorClasses}>
+                      {errors.lugarEvento.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="fechaEvento" className={labelClasses}>
+                    Día del evento
+                  </label>
+                  <Controller
+                    control={control}
+                    name="fechaEvento"
+                    rules={{ required: "Selecciona el día del evento" }}
+                    render={({ field }) => (
+                      <select
+                        id="fechaEvento"
+                        className={selectClasses}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        disabled={!lugarEvento}
+                        onChange={(event) =>
+                          onCambiarFechaEvento(event.target.value)
+                        }
+                      >
+                        <option value="">
+                          {lugarEvento ? "Selecciona..." : "Primero el lugar"}
+                        </option>
+                        {fechasDisponibles.map((fecha) => (
+                          <option key={fecha} value={fecha}>
+                            {fecha}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.fechaEvento && (
+                    <p className={errorClasses}>
+                      {errors.fechaEvento.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="turnoEvento" className={labelClasses}>
+                    Jornada
+                  </label>
+                  <Controller
+                    control={control}
+                    name="turnoEvento"
+                    rules={{ required: "Selecciona la jornada" }}
+                    render={({ field }) => (
+                      <select
+                        id="turnoEvento"
+                        className={selectClasses}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        disabled={!fechaEvento}
+                        onChange={(event) =>
+                          onCambiarTurnoEvento(event.target.value)
+                        }
+                      >
+                        <option value="">
+                          {fechaEvento ? "Selecciona..." : "Primero el día"}
+                        </option>
+                        {turnosDisponibles.map((jornada) => (
+                          <option key={jornada.id} value={jornada.turno}>
+                            {etiquetaTurno(jornada.turno)}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.turnoEvento && (
+                    <p className={errorClasses}>
+                      {errors.turnoEvento.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {jornadaSeleccionada && (
+                <p className="mt-3 text-xs text-slate-600">
+                  Jornada seleccionada: {jornadaSeleccionada.clave} ·{" "}
+                  {etiquetaTurno(jornadaSeleccionada.turno)}
+                </p>
+              )}
+            </div>
+
+            {verificacion?.yaAsistioEnJornada && (
               <Alert status="warning" className="mt-4">
                 <Alert.Content>
                   <Alert.Title>Ya asistió en esta jornada</Alert.Title>
                   <Alert.Description>
-                    Este documento ya tiene un registro para la jornada actual.
-                    No es posible registrarlo dos veces.
+                    Este documento ya tiene un registro para la jornada
+                    seleccionada. No es posible registrarlo dos veces.
                   </Alert.Description>
                 </Alert.Content>
               </Alert>
             )}
 
-            {verificacion?.existe && !verificacion.yaAsistioEnJornadaActual && (
+            {verificacion?.existe && !verificacion.yaAsistioEnJornada && (
               <div className="mt-4">
                 <Alert status="success">
                   <Alert.Content>
                     <Alert.Title>Participante encontrado</Alert.Title>
                     <Alert.Description>
                       Este documento ya está registrado en el evento. Puedes
-                      clonar su asistencia para la jornada actual.
+                      clonar su asistencia para la jornada seleccionada.
                     </Alert.Description>
                   </Alert.Content>
                 </Alert>
@@ -357,7 +483,7 @@ export default function AsistenciasPage() {
                   variant="primary"
                   fullWidth
                   className="mt-3"
-                  isDisabled={isLoading}
+                  isDisabled={isLoading || !jornadaSeleccionada}
                   onPress={() => void onRegistrarRapido()}
                 >
                   Registrar asistencia
@@ -623,29 +749,6 @@ export default function AsistenciasPage() {
                   )}
                 </div>
               )}
-
-              <div>
-                <label htmlFor="lugarEvento" className={labelClasses}>
-                  Lugar del evento
-                </label>
-                <select
-                  id="lugarEvento"
-                  className={selectClasses}
-                  {...register("lugarEvento", {
-                    required: "Selecciona el lugar del evento"
-                  })}
-                >
-                  <option value="">Selecciona...</option>
-                  {LUGARES.map((opcion) => (
-                    <option key={opcion} value={opcion}>
-                      {opcion}
-                    </option>
-                  ))}
-                </select>
-                {errors.lugarEvento && (
-                  <p className={errorClasses}>{errors.lugarEvento.message}</p>
-                )}
-              </div>
 
               <div>
                 <span className={labelClasses}>Calificación del evento</span>

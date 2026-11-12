@@ -1,13 +1,13 @@
 import { axiosInstance } from "@/config/instance";
 import type { IJornadasRepository } from "../domain/jornadas.repository";
-import type { IJornadaActualRes } from "../domain/actual";
 import type { IJornadaConRegistrosRes } from "../domain/con-registros";
+import type { IJornadaEventoRes } from "../domain/evento";
 
 export const jornadasRepository: IJornadasRepository = {
-  async getActual(): Promise<IJornadaActualRes> {
+  async getEvento(): Promise<IJornadaEventoRes[]> {
     try {
-      const response = await axiosInstance.get<IJornadaActualRes>(
-        "/jornadas/actual"
+      const response = await axiosInstance.get<IJornadaEventoRes[]>(
+        "/jornadas/evento"
       );
       return response.data;
     } catch (error) {

@@ -1,5 +1,6 @@
 export interface IRegistrarReq {
   documento: string;
+  jornadaId: string;
   nombreCompleto?: string;
   edad?: number;
   genero?: string;
